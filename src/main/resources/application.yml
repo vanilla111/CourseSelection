@@ -19,8 +19,16 @@ mybatis:
         map-underscore-to-camel-case: true
         default-fetch-size: 100
         default-statement-timeout: 3000
-    mapper-locations: classpath:com.database.cs.dao/*.xml
+    mapper-locations: classpath:mappers/*.xml
 server:
   servlet:
     context-path: /cs
   port: 8080
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+#logging:
+#  path: /Users/wang/temp/log/cs.log
+#  level: info

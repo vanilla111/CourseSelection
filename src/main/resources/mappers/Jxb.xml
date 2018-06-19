@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.database.cs.dao.JxbDao">
+
+    <resultMap id="jxbMap" type="com.database.cs.entity.JXB">
+        <id column="id" jdbcType="INTEGER" javaType="java.lang.Integer" property="id"/>
+        <result column="course_code" jdbcType="VARCHAR" javaType="java.lang.String" property="courseCode"/>
+        <result column="jxb_id" jdbcType="VARCHAR" javaType="java.lang.String" property="jxbId"/>
+        <result column="jxb_name" jdbcType="VARCHAR" javaType="java.lang.String" property="jxbName"/>
+        <result column="class_room" jdbcType="VARCHAR" javaType="java.lang.String" property="classRoom"/>
+        <result column="year" jdbcType="INTEGER" javaType="java.lang.Integer" property="year"/>
+        <result column="hash_day" jdbcType="INTEGER" javaType="java.lang.Integer" property="hashDay"/>
+        <result column="hash_lesson" jdbcType="INTEGER" javaType="java.lang.Integer" property="hashLesson"/>
+        <result column="day" jdbcType="VARCHAR" javaType="java.lang.String" property="day"/>
+        <result column="lesson" jdbcType="VARCHAR" javaType="java.lang.String" property="lesson"/>
+        <result column="type" jdbcType="VARCHAR" javaType="java.lang.String" property="type"/>
+        <result column="period" jdbcType="INTEGER" javaType="java.lang.Integer" property="period"/>
+        <result column="teacher_id" jdbcType="VARCHAR" javaType="java.lang.String" property="teacherId"/>
+        <result column="teacher" jdbcType="VARCHAR" javaType="java.lang.String" property="teacher"/>
+        <result column="raw_week" jdbcType="VARCHAR" javaType="java.lang.String" property="rawWeek"/>
+        <result column="week" jdbcType="VARCHAR" javaType="java.lang.String" property="week"/>
+        <result column="num_limit" jdbcType="INTEGER" javaType="java.lang.Integer" property="numLimit"/>
+        <result column="current_num" jdbcType="INTEGER" javaType="java.lang.Integer" property="current_num"/>
+        <result column="status" jdbcType="INTEGER" javaType="java.lang.Integer" property="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        course_code, jxb_id, jxb_name, class_room, year, hash_day, hash_lesson, day, lesson, type, period, teacher_id, teacher, raw_week, week, num_limit, current_num, status
+    </sql>
+
+    <insert id="saveNewJxb" parameterType="com.database.cs.entity.JXB">
+        INSERT INTO jxb
+        <trim prefix=" (" suffix=")" suffixOverrides=",">
+            <if test="courseCode != null">
+                course_code,
+            </if>
+            <if test="jxbId != null">
+                jxb_id,
+            </if>
+            <if test="jxbName != null">
+                jxb_name,
+            </if>
+            <if test="classRoom != null">
+                class_room,
+            </if>
+            <if test="year != null">
+                year,
+            </if>
+            <if test="hashDay != null">
+                hash_day,
+            </if>
+            <if test="hashLesson != null">
+                hash_lesson,
+            </if>
+            <if test="day != null">
+                day,
+            </if>
+            <if test="lesson != null">
+                lesson,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="period != null">
+                period,
+            </if>
+            <if test="teacherId != null">
+                tea_id,
+            </if>
+            <if test="teacher != null">
+                teacher,
+            </if>
+            <if test="rawWeek != null">
+                raw_week,
+            </if>
+            <if test="week != null">
+                week,
+            </if>
+            <if test="numLimit != null">
+                num_limit,
+            </if>
+            <if test="currentNum != null">
+                current_num,
+            </if>
+            <if test="status != null">
+                status
+            </if>
+        </trim>
+        <trim prefix=" VALUES (" suffix=")" suffixOverrides=",">
+            <if test="courseCode != null">
+                #{courseCode},
+            </if>
+            <if test="jxbId != null">
+                #{jxbId},
+            </if>
+            <if test="jxbName != null">
+                #{jxbName},
+            </if>
+            <if test="classRoom != null">
+                #{classRoom},
+            </if>
+            <if test="year != null">
+                #{year},
+            </if>
+            <if test="hashDay != null">
+                #{hashDay},
+            </if>
+            <if test="hashLesson != null">
+                #{hashLesson},
+            </if>
+            <if test="day != null">
+                #{day},
+            </if>
+            <if test="lesson != null">
+                #{lesson},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="period != null">
+                #{period},
+            </if>
+            <if test="teacherId != null">
+                #{teacherId},
+            </if>
+            <if test="teacher != null">
+                #{teacher},
+            </if>
+            <if test="rawWeek != null">
+                #{rawWeek},
+            </if>
+            <if test="week != null">
+                #{week},
+            </if>
+            <if test="numLimit != null">
+                #{numLimit},
+            </if>
+            <if test="currentNum != null">
+                #{currentNum},
+            </if>
+            <if test="status != null">
+                #{status}
+            </if>
+        </trim>
+    </insert>
+</mapper>
