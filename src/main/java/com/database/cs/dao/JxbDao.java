@@ -17,6 +17,6 @@ public interface JxbDao {
     @Select("select * from jxb where class_room=#{cr} and hash_day=#{hd} and year=#{year} and status=0")
     List<JXB> findByClassRoomAndHashDayAndYear(@Param("cr") String classRoom, @Param("hd") Integer hashDay, @Param("year") Integer year);
 
-    @Select("select * from jxb where tea_id=#{tid} and year=#{year}")
+    @Select("select * from jxb where teacher_id=#{tid} and year=#{year}")
     List<JXB> findByTeaIdAndYear(@Param("tid") String teaId, @Param("year") int year);
 }

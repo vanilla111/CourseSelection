@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.database.cs.dao.StudentDao">
+
+    <resultMap id="stuMap" type="com.database.cs.entity.Student">
+        <id column="sid" jdbcType="INTEGER" javaType="java.lang.Integer" property="sid"/>
+        <result column="academy" jdbcType="VARCHAR" javaType="java.lang.String" property="academy"/>
+        <result column="class_num" jdbcType="VARCHAR" javaType="java.lang.String" property="classNum"/>
+        <result column="gender" jdbcType="VARCHAR" javaType="java.lang.String" property="gender"/>
+        <result column="grade" jdbcType="INTEGER" javaType="java.lang.Integer" property="grade"/>
+        <result column="head_url" jdbcType="VARCHAR" javaType="java.lang.String" property="headUrl"/>
+        <result column="major" jdbcType="VARCHAR" javaType="java.lang.String" property="major"/>
+        <result column="name" jdbcType="VARCHAR" javaType="java.lang.String" property="name"/>
+        <result column="stu_id" jdbcType="VARCHAR" javaType="java.lang.String" property="stuId"/>
+        <result column="password" jdbcType="VARCHAR" javaType="java.lang.String" property="password"/>
+        <result column="status" jdbcType="INTEGER" javaType="java.lang.Integer" property="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sid, academy, class_num, gender, grade, head_url, major, name, stu_id, password
+    </sql>
+
+    <select id="findByStudentContaining" resultMap="stuMap" parameterType="com.database.cs.entity.Student">
+        select * from student where status = 1
+        <if test="gender != null">
+            AND gender = #{gender}
+        </if>
+        <if test="grade != null">
+            AND grade = #{grade}
+        </if>
+        <if test="academy != null">
+            AND academy like '%' #{academy} '%'
+        </if>
+        <if test="classNum != null">
+            AND class_num like '%' #{classNum} '%'
+        </if>
+        <if test="major != null">
+            AND major like '%' #{major} '%'
+        </if>
+        <if test="stuId != null">
+            AND stu_id like '%' #{stuId} '%'
+        </if>
+        <if test="name != null">
+            AND name like '%' #{name} '%'
+        </if>
+    </select>
+    
+    <update id="updateOne" parameterType="com.database.cs.entity.Student">
+        update student set status = 1,
+        <trim suffixOverrides=",">
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="grade != null">
+                grade = #{grade},
+            </if>
+            <if test="academy != null">
+                academy = #{academy},
+            </if>
+            <if test="classNum != null">
+                class_num = #{classNum},
+            </if>
+            <if test="major != null">
+                major = #{major},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+        </trim>
+        where stu_id = #{stuId}
+    </update>
+</mapper>

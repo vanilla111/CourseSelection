@@ -15,6 +15,7 @@ import com.database.cs.util.JxbUtil;
 import com.database.cs.vo.TeacherCourseVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,22 +121,9 @@ public class JxbServiceImpl implements JxbService {
         List<TeacherCourseVo> tcVoList = new ArrayList<>();
         for (JXB jxb : jxbList) {
             int[] weeks = weekToArray(jxb.getWeek());
-            if (flag && !isInWeeks(weeks, week)) {
-                continue;
-            }
+            if (flag && !isInWeeks(weeks, week)) continue;
             TeacherCourseVo tcVo = new TeacherCourseVo();
-            tcVo.setCourseCode(jxb.getCourseCode());
-            tcVo.setJxbId(jxb.getJxbId());
-            tcVo.setJxbName(jxb.getJxbName());
-            tcVo.setHashDay(jxb.getHashDay());
-            tcVo.setDay(jxb.getDay());
-            tcVo.setHashLesson(jxb.getHashLesson());
-            tcVo.setLesson(jxb.getLesson());
-            tcVo.setClassRoom(jxb.getClassRoom());
-            tcVo.setPeriod(jxb.getPeriod());
-            tcVo.setTeacherId(jxb.getTeacherId());
-            tcVo.setTeacher(jxb.getTeacher());
-            tcVo.setRawWeek(jxb.getRawWeek());
+            BeanUtils.copyProperties(jxb, tcVo);
             tcVo.setWeek(weeks);
             tcVoList.add(tcVo);
         }

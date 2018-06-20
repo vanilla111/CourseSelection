@@ -3,6 +3,7 @@ package com.database.cs.controller;
 import com.database.cs.common.ServerResponse;
 import com.database.cs.entity.Teacher;
 import com.database.cs.service.impl.ATeacherServiceImpl;
+import com.database.cs.vo.TeacherVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,11 @@ public class ATeacherController {
                                 @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
                                 @RequestParam(value = "key", required =  false, defaultValue = "") String key) {
         return atService.getTeacherList(page, pageSize, key);
+    }
+
+    @GetMapping(value = "/teachers/{tid}")
+    public ServerResponse<TeacherVo> getOneTeacher(@PathVariable(value = "tid") String teaId) {
+        return atService.getOneTeacher(teaId);
     }
 
     @PostMapping(value = "/teachers")

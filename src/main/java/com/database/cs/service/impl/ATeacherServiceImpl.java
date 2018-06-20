@@ -7,8 +7,10 @@ import com.database.cs.entity.TAcademy;
 import com.database.cs.entity.Teacher;
 import com.database.cs.service.ATeacherService;
 import com.database.cs.util.MD5Util;
+import com.database.cs.vo.TeacherVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,13 @@ public class ATeacherServiceImpl implements ATeacherService {
         PageInfo pageInfo = new PageInfo<Teacher>(tList);
 
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    public ServerResponse<TeacherVo> getOneTeacher(String teaId) {
+        Teacher teacher = tDao.getOne(teaId);
+        TeacherVo teacherVo = new TeacherVo();
+        BeanUtils.copyProperties(teacher, teacherVo);
+        return ServerResponse.createBySuccess(teacherVo);
     }
 
     /**
