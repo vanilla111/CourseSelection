@@ -23,13 +23,66 @@
         <result column="raw_week" jdbcType="VARCHAR" javaType="java.lang.String" property="rawWeek"/>
         <result column="week" jdbcType="VARCHAR" javaType="java.lang.String" property="week"/>
         <result column="num_limit" jdbcType="INTEGER" javaType="java.lang.Integer" property="numLimit"/>
-        <result column="current_num" jdbcType="INTEGER" javaType="java.lang.Integer" property="current_num"/>
+        <result column="current_num" jdbcType="INTEGER" javaType="java.lang.Integer" property="currentNum"/>
         <result column="status" jdbcType="INTEGER" javaType="java.lang.Integer" property="status"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         course_code, jxb_id, jxb_name, class_room, year, hash_day, hash_lesson, day, lesson, type, period, teacher_id, teacher, raw_week, week, num_limit, current_num, status
     </sql>
+    
+    <select id="findByJxbIdIn" resultMap="jxbMap">
+        select * from jxb where jxb_id in (
+        <foreach collection="list" item="item" index="index" separator=",">
+            #{item.jxbId}
+        </foreach>)
+    </select>
+    
+    <update id="updateJxb" parameterType="com.database.cs.entity.JXB">
+        update jxb
+        <trim prefix="set" suffixOverrides=",">
+            <if test="teacherId != null">
+                teacher_id = #{teacherId},
+            </if>
+            <if test="teacher != null">
+                teacher = #{teacher},
+            </if>
+            <if test="numLimit != null">
+                num_limit = #{limit},
+            </if>
+            <if test="currentNum != null">
+                current_num = #{currentNum},
+            </if>
+        </trim>
+        where jxb_id=#{jxbId}
+    </update>
+    
+    <select id="findByJxbContaining" parameterType="com.database.cs.entity.JXB" resultMap="jxbMap">
+        select * from jxb where 1=1
+        <trim suffixOverrides=",">
+            <if test="courseCode != null">
+                AND course_code = #{courseCode},
+            </if>
+            <if test="classRoom != null">
+                AND class_room like '%' #{classRoom} '%',
+            </if>
+            <if test="hashDay != null">
+                AND hash_day=#{hashDay},
+            </if>
+            <if test="hashLesson != null">
+                AND hash_lesson=#{hashLesson},
+            </if>
+            <if test="type != null">
+                AND type=#{type},
+            </if>
+            <if test="teacher != null">
+                AND teacher like '%' #{teacher} '%',
+            </if>
+            <if test="year != null">
+                AND year = #{year},
+            </if>
+        </trim>
+    </select>
 
     <insert id="saveNewJxb" parameterType="com.database.cs.entity.JXB">
         INSERT INTO jxb

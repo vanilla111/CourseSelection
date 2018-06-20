@@ -11,7 +11,15 @@ spring:
       min-idle: 2
       max-wait: 60000
       filters: stat
-
+  redis:
+    host: 127.0.0.1
+    password: a123456
+    port: 6379
+    jedis:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
 # application.yml
 mybatis:
     type-aliases-package: com.database.cs.entity

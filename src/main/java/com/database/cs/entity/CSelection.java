@@ -14,6 +14,8 @@ public class CSelection {
 
     private String stuId;
 
+    private String courseCode;
+
     private String jxbId;
 
     // 选课类型：正常，先修，补修，重修

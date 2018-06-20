@@ -48,8 +48,33 @@ public class JxbServiceImpl implements JxbService {
      */
     public ServerResponse<PageInfo<JXB>> getJxbList(int page, int pageSize, JXB jxb) {
         PageHelper.startPage(page, pageSize);
+        List<JXB> jxbList = jxbDao.findByJxbContaining(jxb);
 
-        return null;
+        return ServerResponse.createBySuccess(new PageInfo<>(jxbList));
+    }
+
+    /**
+     * 根据课程号查找教学班
+     * @param courseCode
+     * @return
+     */
+    public ServerResponse<List<JXB>> getJxbListByCourseCode(String courseCode) {
+        JXB jxb = new JXB();
+        jxb.setCourseCode(courseCode);
+        return ServerResponse.createBySuccess(jxbDao.findByJxbContaining(jxb));
+    }
+
+    /**
+     * 更新一个教学班的信息
+     * @param jxb
+     * @return
+     */
+    public ServerResponse<String> updateOneJxb(JXB jxb) {
+        if (jxb == null) return ServerResponse.createByErrorMessage("更新你失败，空对象");
+        if (jxb.getJxbId() == null) return ServerResponse.createByErrorMessage("缺少jxbId参数");
+        jxbDao.updateJxb(jxb);
+
+        return ServerResponse.createBySuccess();
     }
 
     /**

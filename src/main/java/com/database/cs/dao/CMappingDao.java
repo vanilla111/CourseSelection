@@ -1,10 +1,7 @@
 package com.database.cs.dao;
 
 import com.database.cs.entity.CMapping;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -39,4 +36,7 @@ public interface CMappingDao {
 
     @Insert("insert into course_mapping (course_code, course_name) values (#{cm.courseCode}, #{cm.courseName})")
     boolean save(@Param("cm") CMapping cMapping);
+
+    @Delete("delete from course_mapping where course_code=#{cc}")
+    boolean delete(@Param("cc") String courseCode);
 }

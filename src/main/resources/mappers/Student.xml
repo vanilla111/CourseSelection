@@ -49,8 +49,8 @@
     </select>
     
     <update id="updateOne" parameterType="com.database.cs.entity.Student">
-        update student set status = 1,
-        <trim suffixOverrides=",">
+        update student
+        <trim prefix="set" suffixOverrides=",">
             <if test="gender != null">
                 gender = #{gender},
             </if>
