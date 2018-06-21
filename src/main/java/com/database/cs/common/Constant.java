@@ -11,7 +11,7 @@ public class Constant {
     public final static long LOCK_TIME_OUT = 10;
 
     // redis 锁过期时间
-    public final static int EXPIRE_TIME = 5;
+    public final static int EXPIRE_TIME = 20;
 
     public enum CSelectStatus {
         CS(1, "选中"), NO_CS(0, "取消");

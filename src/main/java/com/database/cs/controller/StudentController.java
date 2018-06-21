@@ -20,17 +20,17 @@ public class StudentController {
 
     @GetMapping(value = "/courses/{stuId}")
     public ServerResponse getStuCourses(@PathVariable(value = "stuId") String stuId,
-                                        int week) {
+                                        @RequestParam(value = "week", required = false, defaultValue = "0") int week) {
         return stuService.getStudentCourses(stuId, week);
     }
 
-    @GetMapping(value = "/cs.do")
+    @PostMapping(value = "/cs.do")
     public ServerResponse courseSelect(@RequestParam(value = "token") String token, String jxbId) {
         return stuService.courseSelect(token, jxbId);
     }
 
     @DeleteMapping(value = "/courses")
     public ServerResponse cancelCS(@RequestParam(value = "token") String token, String jxbId) {
-        return null;
+        return stuService.cancelCourseSelect(token, jxbId);
     }
 }

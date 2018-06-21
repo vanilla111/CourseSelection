@@ -9,11 +9,11 @@ public class JxbOperateLog {
 
     private Integer id;
 
-    private String who;
+    private String adminId;
 
     private Date createdAt;
 
-    private String desc;
+    private String text;
 
     private String ip;
 }

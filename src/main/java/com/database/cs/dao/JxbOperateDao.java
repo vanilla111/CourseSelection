@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public interface JxbOperateDao {
 
-    @Insert("insert into jxb_operate_log (who, desc, ip, created_at) values (#{who}, #{desc}, #{ip}, #{createdAt})")
+    @Insert("insert into jxb_operate_log (admin_id, text, ip, created_at) values (#{adminId}, #{text}, #{ip}, #{createdAt})")
     boolean save(JxbOperateLog jxbOperateLog);
 }

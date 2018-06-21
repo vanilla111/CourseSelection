@@ -21,12 +21,15 @@ public interface CourseSelectDao {
     @Select("select * from course_select where jxb_id = #{jid} and status=1 order by stu_id asc")
     List<CSelection> findByJxbId(@Param("jid") String jxbId);
 
-    @Select("select * from course_select where stu_id = #{sid} and course_code = #{cc} and status=1 limit 1")
+    @Select("select * from course_select where stu_id = #{sid} and course_code = #{cc} limit 1")
     CSelection getOneByStuIdAndCourseCode(@Param("sid") String stuId, @Param("cc") String courseCode);
 
-    @Select("select * from course_select where stu_id = #{sid} and jxb_id = #{jid} and status=1")
+    @Select("select * from course_select where stu_id = #{sid} and jxb_id = #{jid} and status=1 for update")
     CSelection getOneByStuIdAndJxbId(@Param("sid") String stuId, @Param("jid") String jxbId);
 
     @Update("update course_select set status=0 where stu_id = #{sid} and jxb_id = #{jid}")
     void cancelSelect(@Param("sid") String id, @Param("jid") String jxbId);
+
+    @Update("update course_select set status=1 where stu_id = #{sid} and jxb_id = #{jid}")
+    void recoverSelect(@Param("sid") String id, @Param("jid") String jxbId);
 }

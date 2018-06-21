@@ -90,6 +90,7 @@ public class JxbServiceImpl implements JxbService {
      * @param jxb
      * @return
      */
+    @Transactional
     public ServerResponse<String> updateOneJxb(JXB jxb) {
         if (jxb == null) return ServerResponse.createByErrorMessage("更新失败，空对象");
         if (jxb.getJxbId() == null) return ServerResponse.createByErrorMessage("缺少jxbId参数");
@@ -98,6 +99,11 @@ public class JxbServiceImpl implements JxbService {
             if (teacher == null) return ServerResponse.createByErrorMessage("教师工号不存在");
             jxb.setTeacher(teacher.getName());
         }
+        JxbOperateLog jol = new JxbOperateLog();
+        jol.setAdminId("admin");
+        jol.setText("修改");
+        jol.setCreatedAt(new Date());
+        joDao.save(jol);
         jxbDao.updateJxb(jxb);
 
         return ServerResponse.createBySuccess();
@@ -160,8 +166,8 @@ public class JxbServiceImpl implements JxbService {
         jxbDao.saveNewJxb(jxb);
         JxbOperateLog jol = new JxbOperateLog();
         jol.setCreatedAt(new Date());
-        jol.setWho("admin");
-        jol.setDesc("create");
+        jol.setAdminId("admin");
+        jol.setText("create");
         joDao.save(jol);
         return ServerResponse.createBySuccess();
     }

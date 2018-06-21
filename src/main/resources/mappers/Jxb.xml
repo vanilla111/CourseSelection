@@ -119,7 +119,7 @@
                 period,
             </if>
             <if test="teacherId != null">
-                tea_id,
+                teacher_id,
             </if>
             <if test="teacher != null">
                 teacher,

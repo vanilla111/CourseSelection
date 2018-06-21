@@ -9,7 +9,6 @@ import com.database.cs.entity.CSelection;
 import com.database.cs.entity.JXB;
 import com.database.cs.service.StudentService;
 import com.database.cs.util.JxbUtil;
-import com.database.cs.util.RedisLock;
 import com.database.cs.vo.JxbVo;
 import com.database.cs.vo.ReadyCourses;
 import com.database.cs.vo.StudentCourseVo;
@@ -40,6 +39,9 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private JxbServiceImpl jxbService;
 
+    @Autowired
+    private RedisLockServiceImpl redisLockService;
+
     /**
      * 获得可选课列表，按课程号分类
      */
@@ -61,16 +63,17 @@ public class StudentServiceImpl implements StudentService {
         CSelection cs = csDao.getOneByStuIdAndJxbId(stuId, jxbId);
         if (cs == null) return ServerResponse.createBySuccess();
         // 给redis加锁
-        RedisLock redisLock = new RedisLock(Constant.CS_LOCK + jxbId);
-        redisLock.lock("1");
-        if (!redisLock.isLock()) return ServerResponse.createByErrorMessage("人数过多，请稍后尝试");
+        redisLockService.lock(Constant.CS_LOCK + jxbId, "1");
+        if (!redisLockService.isLock()) return ServerResponse.createByErrorMessage("人数过多，请稍后尝试");
         // 给教学班现有人数-1， 如果redis缓存中数字低于0，置为1
         jxbDao.decrementCurrentNum(jxbId);
+        csDao.cancelSelect(stuId, jxbId);
         String temp = redis.opsForValue().get(jxbId);
         int flag = Integer.valueOf(temp);
         if (flag <= 0)
             redis.opsForValue().set(jxbId, "1");
-        redisLock.unlock();
+        // 解锁
+        redisLockService.unlock();
         return ServerResponse.createBySuccess();
     }
 
@@ -104,10 +107,10 @@ public class StudentServiceImpl implements StudentService {
         JXB jxb = jxbService.getOne(jxbId).getData();
         if (jxb == null) return ServerResponse.createByErrorMessage("没有该课程可供选择");
         CSelection cSelection = csDao.getOneByStuIdAndCourseCode(stuId, jxb.getCourseCode());
-        if (cSelection != null) return ServerResponse.createByErrorMessage("你已经选过该课程");
+        if (cSelection != null && cSelection.getStatus() == 1) return ServerResponse.createByErrorMessage("你已经选过该课程");
 
         if (jxb.getCurrentNum() >= jxb.getNumLimit()) return ServerResponse.createByErrorMessage("选课人数已达到上限");
-        if (!redis.hasKey(Constant.CS_LOCK + jxbId)) return ServerResponse.createByErrorMessage("人数过多，请稍后尝试");
+        if (redis.hasKey(Constant.CS_LOCK + jxbId)) return ServerResponse.createByErrorMessage("人数过多，请稍后尝试");
         if (!redis.hasKey(jxbId)) {
             initJxbNumList(jxbId);
         }
@@ -132,7 +135,10 @@ public class StudentServiceImpl implements StudentService {
             cs.setUpdatedAt(new Date());
             cs.setYear(Constant.YEAR);
             cs.setStatus(Constant.CSelectStatus.CS.getCode());
-            csDao.save(cs);
+            if (cSelection == null)
+                csDao.save(cs);
+            else
+                csDao.recoverSelect(stuId, jxbId);
             jxbDao.incrementCurrentNum(jxbId);
             return ServerResponse.createBySuccess();
         }
