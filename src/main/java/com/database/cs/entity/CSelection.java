@@ -24,4 +24,8 @@ public class CSelection {
     private Date createdAt;
 
     private Date updatedAt;
+
+    private int year;
+
+    private int status;
 }

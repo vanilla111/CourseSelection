@@ -18,4 +18,9 @@ public class TeacherController {
             @RequestParam(value = "week", required = false, defaultValue = "0") int week) {
         return jxbService.getTeacherCourse(teaId, week, -1);
     }
+
+    @GetMapping(value = "/students/{jxb}")
+    public ServerResponse getStuListByJxbId(@PathVariable(value = "jxb") String jxbId) {
+        return jxbService.getStuListByJxbId(jxbId);
+    }
 }

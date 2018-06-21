@@ -4,6 +4,7 @@ import com.database.cs.entity.JXB;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,6 +21,12 @@ public interface JxbDao {
 
     List<JXB> findByJxbIdIn(List list);
 
+    @Update("update jxb set current_num = current_num + 1 where jxb_id=#{jxbId}")
+    void incrementCurrentNum(@Param("jxbId") String jxbId);
+
+    @Update("update jxb set current_num = current_num - 1 where jxb_id=#{jxbId}")
+    void decrementCurrentNum(@Param("jxbId") String jxbId);
+
     @Select("select * from jxb")
     List<JXB> getAll();
 
@@ -28,6 +35,9 @@ public interface JxbDao {
 
     @Select("select * from jxb where teacher_id=#{tid} and year=#{year}")
     List<JXB> findByTeaIdAndYear(@Param("tid") String teaId, @Param("year") int year);
+
+    @Select("select * from jxb where jxb_id=#{jid} and year=#{year}")
+    JXB findByJxbIdAndYear(@Param("jid") String jxbId, @Param("year") int year);
 
     @Select("select * from jxb where course_code=#{cc} limit 1")
     JXB getOneJxbByCourseCode(@Param("cc") String courseCode);

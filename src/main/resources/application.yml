@@ -2,24 +2,25 @@ spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
-    password: wws123
+    password: wws12345
     url: jdbc:mysql://127.0.0.1:3306/cs?characterEncoding=utf-8&useSSL=false
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-      max-active: 10
-      initial-size: 2
-      min-idle: 2
+      max-active: 100
+      initial-size: 10
+      min-idle: 20
       max-wait: 60000
       filters: stat
   redis:
     host: 127.0.0.1
-    password: a123456
+    password:
     port: 6379
     jedis:
       pool:
-        max-idle: 8
-        min-idle: 0
-        max-active: 8
+        max-idle: 700
+        min-idle: 500
+        max-active: 1000
+    timeout: 10s
 # application.yml
 mybatis:
     type-aliases-package: com.database.cs.entity

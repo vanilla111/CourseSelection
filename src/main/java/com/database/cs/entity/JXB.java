@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * 教学班实体类，记录了一个教学班的上课地点、时间、人数上限等信息
@@ -29,13 +30,13 @@ public class JXB {
     private Integer year;
 
     // 周一为 0
-    @NotEmpty(message = "周几信息不能为空")
+    @NotNull(message = "周几信息不能为空")
     @Min(value = 0, message = "取值范围0-6")
     @Max(value = 6, message = "取值范围0-6")
     private Integer hashDay;
 
     // 第几大节课
-    @NotEmpty(message = "第几大节信息不能为空")
+    @NotNull(message = "第几大节信息不能为空")
     @Min(value = 0, message = "取值范围0-5")
     @Max(value = 5, message = "取值范围0-5")
     private Integer hashLesson;
@@ -51,7 +52,7 @@ public class JXB {
     private String classRoom;
 
     // 一节课持续时间，如 3 表示三节连上
-    @NotEmpty(message = "课程持续时间不能为空")
+    @NotNull(message = "课程持续时间不能为空")
     @Min(value = 0, message = "取值范围0-11")
     @Max(value = 12, message = "取值范围0-11")
     private Integer period;
@@ -81,7 +82,7 @@ public class JXB {
     private Integer currentNum;
 
     // 学分
-    @NotEmpty(message = "学分不能为空")
+    @NotNull(message = "学分不能为空")
     private Integer credit;
 
     private Integer status;

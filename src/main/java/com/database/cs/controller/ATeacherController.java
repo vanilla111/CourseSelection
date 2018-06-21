@@ -45,6 +45,7 @@ public class ATeacherController {
                                         @RequestParam(value = "position", required = false) String position,
                                         @RequestParam(value = "password", required = false) String password){
         Teacher teacher = new Teacher();
+        teacher.setTeaId(tid);
         teacher.setName(name);
         teacher.setAid(aid);
         teacher.setPosition(position);

@@ -2,10 +2,7 @@ package com.database.cs.service.impl;
 
 import com.database.cs.common.Constant;
 import com.database.cs.common.ServerResponse;
-import com.database.cs.dao.CMappingDao;
-import com.database.cs.dao.JxbDao;
-import com.database.cs.dao.JxbOperateDao;
-import com.database.cs.dao.TeacherDao;
+import com.database.cs.dao.*;
 import com.database.cs.entity.CMapping;
 import com.database.cs.entity.JXB;
 import com.database.cs.entity.JxbOperateLog;
@@ -17,6 +14,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +37,28 @@ public class JxbServiceImpl implements JxbService {
     @Autowired
     private JxbOperateDao joDao;
 
+    @Autowired
+    private CourseSelectDao csDao;
+
+    /**
+     * 根据教学班id获取
+     * @param jxbId
+     * @return
+     */
+    @Cacheable(value = "jxbIdToJxb")
+    public ServerResponse<JXB> getOne(String jxbId) {
+        return ServerResponse.createBySuccess(jxbDao.getOne(jxbId));
+    }
+
+    /**
+     * 根据教学班id获得选课学生列表
+     * @param jxbId
+     * @return
+     */
+    public ServerResponse getStuListByJxbId(String jxbId) {
+        return ServerResponse.createBySuccess(csDao.findByJxbId(jxbId));
+    }
+
     /**
      * 获得一个符合jxb特征的教学班列表
      * @param page
@@ -58,6 +78,7 @@ public class JxbServiceImpl implements JxbService {
      * @param courseCode
      * @return
      */
+    @Cacheable(value = "courseCodeToJxbs")
     public ServerResponse<List<JXB>> getJxbListByCourseCode(String courseCode) {
         JXB jxb = new JXB();
         jxb.setCourseCode(courseCode);
@@ -70,8 +91,13 @@ public class JxbServiceImpl implements JxbService {
      * @return
      */
     public ServerResponse<String> updateOneJxb(JXB jxb) {
-        if (jxb == null) return ServerResponse.createByErrorMessage("更新你失败，空对象");
+        if (jxb == null) return ServerResponse.createByErrorMessage("更新失败，空对象");
         if (jxb.getJxbId() == null) return ServerResponse.createByErrorMessage("缺少jxbId参数");
+        if (jxb.getTeacherId() != null) {
+            Teacher teacher = teaDao.getOne(jxb.getTeacherId());
+            if (teacher == null) return ServerResponse.createByErrorMessage("教师工号不存在");
+            jxb.setTeacher(teacher.getName());
+        }
         jxbDao.updateJxb(jxb);
 
         return ServerResponse.createBySuccess();

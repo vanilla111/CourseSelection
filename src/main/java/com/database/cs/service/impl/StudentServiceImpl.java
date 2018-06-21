@@ -1,5 +1,6 @@
 package com.database.cs.service.impl;
 
+import com.database.cs.common.Constant;
 import com.database.cs.common.ServerResponse;
 import com.database.cs.dao.CourseSelectDao;
 import com.database.cs.dao.JxbDao;
@@ -8,10 +9,13 @@ import com.database.cs.entity.CSelection;
 import com.database.cs.entity.JXB;
 import com.database.cs.service.StudentService;
 import com.database.cs.util.JxbUtil;
+import com.database.cs.util.RedisLock;
 import com.database.cs.vo.JxbVo;
 import com.database.cs.vo.ReadyCourses;
+import com.database.cs.vo.StudentCourseVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +37,59 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StringRedisTemplate redis;
 
+    @Autowired
+    private JxbServiceImpl jxbService;
+
     /**
      * 获得可选课列表，按课程号分类
      */
+    @Cacheable(value = "ready_courses")
     public ServerResponse getCourseList() {
         List<JXB> jxbList = jxbDao.getAll();
         return ServerResponse.createBySuccess(jxbsGroupByCourseCode(jxbList));
+    }
+
+    /**
+     * 取消选课
+     * @param stuId
+     * @param jxbId
+     * @return
+     */
+    @Transactional
+    public ServerResponse cancelCourseSelect(String stuId, String jxbId) {
+        // 查询是否选择了该课程
+        CSelection cs = csDao.getOneByStuIdAndJxbId(stuId, jxbId);
+        if (cs == null) return ServerResponse.createBySuccess();
+        // 给redis加锁
+        RedisLock redisLock = new RedisLock(Constant.CS_LOCK + jxbId);
+        redisLock.lock("1");
+        if (!redisLock.isLock()) return ServerResponse.createByErrorMessage("人数过多，请稍后尝试");
+        // 给教学班现有人数-1， 如果redis缓存中数字低于0，置为1
+        jxbDao.decrementCurrentNum(jxbId);
+        String temp = redis.opsForValue().get(jxbId);
+        int flag = Integer.valueOf(temp);
+        if (flag <= 0)
+            redis.opsForValue().set(jxbId, "1");
+        redisLock.unlock();
+        return ServerResponse.createBySuccess();
+    }
+
+    @Cacheable
+    public ServerResponse getStudentCourses(String stuId, int week) {
+        List<CSelection> csList = csDao.findByStuId(stuId);
+        if (csList.size() > 0 ) {
+            List<JXB> jxbList = new ArrayList<>();
+            for (CSelection cSelection : csList) {
+                JXB jxb = jxbDao.findByJxbIdAndYear(cSelection.getJxbId(), Constant.YEAR);
+                jxbList.add(jxb);
+            }
+            if (jxbList.size() > 0) {
+                List<StudentCourseVo> scList = getStudentCourseVo(jxbList, week);
+                return ServerResponse.createBySuccess(scList);
+            }
+        }
+
+        return ServerResponse.createBySuccess();
     }
 
 
@@ -50,12 +101,13 @@ public class StudentServiceImpl implements StudentService {
      */
     @Transactional
     public ServerResponse courseSelect(String stuId, String jxbId) {
-        JXB jxb = jxbDao.getOne(jxbId);
+        JXB jxb = jxbService.getOne(jxbId).getData();
         if (jxb == null) return ServerResponse.createByErrorMessage("没有该课程可供选择");
         CSelection cSelection = csDao.getOneByStuIdAndCourseCode(stuId, jxb.getCourseCode());
         if (cSelection != null) return ServerResponse.createByErrorMessage("你已经选过该课程");
 
-        if (jxb.getCurrentNum() >= jxb.getNumLimit()) return ServerResponse.createByErrorMessage("人数已达到上限");
+        if (jxb.getCurrentNum() >= jxb.getNumLimit()) return ServerResponse.createByErrorMessage("选课人数已达到上限");
+        if (!redis.hasKey(Constant.CS_LOCK + jxbId)) return ServerResponse.createByErrorMessage("人数过多，请稍后尝试");
         if (!redis.hasKey(jxbId)) {
             initJxbNumList(jxbId);
         }
@@ -67,8 +119,10 @@ public class StudentServiceImpl implements StudentService {
                 return ServerResponse.createByErrorMessage("与已选课程冲突");
         }
 
-        int number = Integer.valueOf(redis.opsForList().rightPop(jxbId));
-        if (number > 0) {
+        // 获取redis锁
+
+        long flag = redis.opsForValue().increment(jxbId, -1);
+        if (flag > 0) {
             // 抢到号码 继续执行
             CSelection cs = new CSelection();
             cs.setJxbId(jxbId);
@@ -76,25 +130,22 @@ public class StudentServiceImpl implements StudentService {
             cs.setCourseCode(jxb.getCourseCode());
             cs.setCreatedAt(new Date());
             cs.setUpdatedAt(new Date());
+            cs.setYear(Constant.YEAR);
+            cs.setStatus(Constant.CSelectStatus.CS.getCode());
             csDao.save(cs);
-            JXB tempJxb = new JXB();
-            tempJxb.setJxbId(jxbId);
-            tempJxb.setCurrentNum(jxb.getCurrentNum() + 1);
-            jxbDao.updateJxb(tempJxb);
+            jxbDao.incrementCurrentNum(jxbId);
             return ServerResponse.createBySuccess();
         }
 
-        return ServerResponse.createByErrorMessage("抢课失败");
+        return ServerResponse.createByErrorMessage("选课人数已达到上限");
     }
 
     private void initJxbNumList(String jxbId) {
         JXB jxb = jxbDao.getOne(jxbId);
-        String[] s = new String[jxb.getNumLimit()];
-        for (Integer i = 1; i <= jxb.getNumLimit(); i++) {
-            s[i - 1] = String.valueOf(i);
-        }
-        List<String> list = Arrays.asList(s);
-        redis.opsForList().rightPushAll(jxbId, list);
+        if (jxb != null)
+            redis.opsForValue().set(jxbId, String.valueOf(jxb.getNumLimit() - jxb.getCurrentNum()));
+        else
+            redis.opsForValue().set(jxbId, "0");
     }
 
     private List<ReadyCourses> jxbsGroupByCourseCode(List<JXB> jxbList) {
@@ -120,5 +171,38 @@ public class StudentServiceImpl implements StudentService {
             list.add(rc);
         }
         return list;
+    }
+
+    private List<StudentCourseVo> getStudentCourseVo(List<JXB> jxbList, int week) {
+        boolean flag = week != 0;
+        List<StudentCourseVo> tcVoList = new ArrayList<>();
+        for (JXB jxb : jxbList) {
+            int[] weeks = weekToArray(jxb.getWeek());
+            if (flag && !isInWeeks(weeks, week)) continue;
+            StudentCourseVo scVo = new StudentCourseVo();
+            BeanUtils.copyProperties(jxb, scVo);
+            scVo.setWeek(weeks);
+            tcVoList.add(scVo);
+        }
+
+        return tcVoList;
+    }
+
+    private int[] weekToArray(String week) {
+        String[] chars = week.split(",");
+
+        int[] weeks = new int[chars.length];
+        for (int i = 0; i < chars.length; i++) {
+            weeks[i] = Integer.valueOf(chars[i]);
+        }
+        return weeks;
+    }
+
+    private boolean isInWeeks(int[] weeks, int week) {
+        for (int i : weeks) {
+            if (week == i) return true;
+        }
+
+        return false;
     }
 }

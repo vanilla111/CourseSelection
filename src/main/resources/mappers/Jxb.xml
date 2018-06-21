@@ -59,29 +59,27 @@
     
     <select id="findByJxbContaining" parameterType="com.database.cs.entity.JXB" resultMap="jxbMap">
         select * from jxb where 1=1
-        <trim suffixOverrides=",">
             <if test="courseCode != null">
-                AND course_code = #{courseCode},
+                AND course_code = #{courseCode}
             </if>
             <if test="classRoom != null">
-                AND class_room like '%' #{classRoom} '%',
+                AND class_room like '%' #{classRoom} '%'
             </if>
             <if test="hashDay != null">
-                AND hash_day=#{hashDay},
+                AND hash_day=#{hashDay}
             </if>
             <if test="hashLesson != null">
-                AND hash_lesson=#{hashLesson},
+                AND hash_lesson=#{hashLesson}
             </if>
             <if test="type != null">
-                AND type=#{type},
+                AND type=#{type}
             </if>
             <if test="teacher != null">
-                AND teacher like '%' #{teacher} '%',
+                AND teacher like '%' #{teacher} '%'
             </if>
             <if test="year != null">
-                AND year = #{year},
+                AND year = #{year}
             </if>
-        </trim>
     </select>
 
     <insert id="saveNewJxb" parameterType="com.database.cs.entity.JXB">

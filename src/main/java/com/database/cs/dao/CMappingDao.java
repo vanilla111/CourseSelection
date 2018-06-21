@@ -16,7 +16,7 @@ public interface CMappingDao {
     @Select("select * from course_mapping where course_code=#{code} limit 1")
     CMapping getOne(@Param("code") String code);
 
-    @Select("select * from course_mapping")
+    @Select("select * from course_mapping order by id desc")
     List<CMapping> getAll();
 
     @Select("select * from course_mapping where course_name=#{name}")
