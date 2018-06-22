@@ -25,10 +25,11 @@
         <result column="num_limit" jdbcType="INTEGER" javaType="java.lang.Integer" property="numLimit"/>
         <result column="current_num" jdbcType="INTEGER" javaType="java.lang.Integer" property="currentNum"/>
         <result column="status" jdbcType="INTEGER" javaType="java.lang.Integer" property="status"/>
+        <result column="credit" jdbcType="INTEGER" javaType="java.lang.Integer" property="credit"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        course_code, jxb_id, jxb_name, class_room, year, hash_day, hash_lesson, day, lesson, type, period, teacher_id, teacher, raw_week, week, num_limit, current_num, status
+        course_code, jxb_id, jxb_name, class_room, year, hash_day, hash_lesson, day, lesson, type, period, teacher_id, teacher, raw_week, week, num_limit, current_num, status, credit
     </sql>
     
     <select id="findByJxbIdIn" resultMap="jxbMap">
@@ -137,7 +138,10 @@
                 current_num,
             </if>
             <if test="status != null">
-                status
+                status,
+            </if>
+            <if test="credit != null">
+                credit
             </if>
         </trim>
         <trim prefix=" VALUES (" suffix=")" suffixOverrides=",">
@@ -193,7 +197,10 @@
                 #{currentNum},
             </if>
             <if test="status != null">
-                #{status}
+                #{status},
+            </if>
+            <if test="credit != null">
+                #{credit}
             </if>
         </trim>
     </insert>

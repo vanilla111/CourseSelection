@@ -13,9 +13,9 @@ public class StudentController {
     @Autowired
     private StudentServiceImpl stuService;
 
-    @PostMapping(value = "/courses")
+    @GetMapping(value = "/courses")
     public ServerResponse getReadyCourses() {
-        return stuService.getCourseList();
+        return ServerResponse.createBySuccess(stuService.getCourseList());
     }
 
     @GetMapping(value = "/courses/{stuId}")

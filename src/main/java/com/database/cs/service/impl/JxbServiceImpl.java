@@ -45,9 +45,9 @@ public class JxbServiceImpl implements JxbService {
      * @param jxbId
      * @return
      */
-    @Cacheable(value = "jxbIdToJxb")
-    public ServerResponse<JXB> getOne(String jxbId) {
-        return ServerResponse.createBySuccess(jxbDao.getOne(jxbId));
+    @Cacheable(value = "jxb", key = "#p0")
+    public JXB getOne(String jxbId) {
+        return jxbDao.getOne(jxbId);
     }
 
     /**

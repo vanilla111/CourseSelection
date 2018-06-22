@@ -14,6 +14,8 @@ import com.database.cs.vo.ReadyCourses;
 import com.database.cs.vo.StudentCourseVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
+@CacheConfig(cacheNames = "stu:courses")
 public class StudentServiceImpl implements StudentService {
 
     @Autowired
@@ -45,10 +48,9 @@ public class StudentServiceImpl implements StudentService {
     /**
      * 获得可选课列表，按课程号分类
      */
-    @Cacheable(value = "ready_courses")
-    public ServerResponse getCourseList() {
-        List<JXB> jxbList = jxbDao.getAll();
-        return ServerResponse.createBySuccess(jxbsGroupByCourseCode(jxbList));
+    @Cacheable
+    public List<JXB> getCourseList() {
+        return jxbDao.getAll();
     }
 
     /**
@@ -58,6 +60,7 @@ public class StudentServiceImpl implements StudentService {
      * @return
      */
     @Transactional
+    @CacheEvict(key = "#p0")
     public ServerResponse cancelCourseSelect(String stuId, String jxbId) {
         // 查询是否选择了该课程
         CSelection cs = csDao.getOneByStuIdAndJxbId(stuId, jxbId);
@@ -69,6 +72,10 @@ public class StudentServiceImpl implements StudentService {
         jxbDao.decrementCurrentNum(jxbId);
         csDao.cancelSelect(stuId, jxbId);
         String temp = redis.opsForValue().get(jxbId);
+        if (temp == null) {
+            redisLockService.unlock();
+            return ServerResponse.createBySuccess("系统错误");
+        }
         int flag = Integer.valueOf(temp);
         if (flag <= 0)
             redis.opsForValue().set(jxbId, "1");
@@ -77,9 +84,10 @@ public class StudentServiceImpl implements StudentService {
         return ServerResponse.createBySuccess();
     }
 
-    @Cacheable
-    public ServerResponse getStudentCourses(String stuId, int week) {
+    @Cacheable(key = "#p0")
+    public ServerResponse<List<StudentCourseVo>> getStudentCourses(String stuId, int week) {
         List<CSelection> csList = csDao.findByStuId(stuId);
+        List<StudentCourseVo> scList = null;
         if (csList.size() > 0 ) {
             List<JXB> jxbList = new ArrayList<>();
             for (CSelection cSelection : csList) {
@@ -87,33 +95,35 @@ public class StudentServiceImpl implements StudentService {
                 jxbList.add(jxb);
             }
             if (jxbList.size() > 0) {
-                List<StudentCourseVo> scList = getStudentCourseVo(jxbList, week);
+                scList = getStudentCourseVo(jxbList, week);
                 return ServerResponse.createBySuccess(scList);
             }
         }
 
-        return ServerResponse.createBySuccess();
+        scList = new ArrayList<>();
+        return ServerResponse.createBySuccess(scList);
     }
 
 
     /**
      * 选课
-     *@param stuId
+     * @param stuId
      * @param jxbId
      * @return
      */
     @Transactional
+    @CacheEvict(key = "#p0")
     public ServerResponse courseSelect(String stuId, String jxbId) {
-        JXB jxb = jxbService.getOne(jxbId).getData();
+        if (!redis.hasKey(jxbId)) {
+            initJxbNumList(jxbId);
+        }
+        JXB jxb = jxbDao.getOne(jxbId);
         if (jxb == null) return ServerResponse.createByErrorMessage("没有该课程可供选择");
         CSelection cSelection = csDao.getOneByStuIdAndCourseCode(stuId, jxb.getCourseCode());
         if (cSelection != null && cSelection.getStatus() == 1) return ServerResponse.createByErrorMessage("你已经选过该课程");
 
         if (jxb.getCurrentNum() >= jxb.getNumLimit()) return ServerResponse.createByErrorMessage("选课人数已达到上限");
         if (redis.hasKey(Constant.CS_LOCK + jxbId)) return ServerResponse.createByErrorMessage("人数过多，请稍后尝试");
-        if (!redis.hasKey(jxbId)) {
-            initJxbNumList(jxbId);
-        }
         // 检查该教学班是否与学生已选的冲突
         List<CSelection> csList = csDao.findByStuId(stuId);
         if (csList.size() > 0) {
