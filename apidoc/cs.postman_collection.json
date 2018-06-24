@@ -1,0 +1,632 @@
+{
+	"info": {
+		"_postman_id": "cd30b586-7eca-44ae-b72c-221a522442b8",
+		"name": "cs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "admin",
+			"description": null,
+			"item": [
+				{
+					"name": "admin获得教师列表",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/teachers?key=通信",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"teachers"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "通信"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin新增一名学生",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/students?stuId=2015211517&gender=男&name=王炜松&academy=软件&major=软件工程&classNum=04011503&grade=2015&password=123456",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"students"
+							],
+							"query": [
+								{
+									"key": "stuId",
+									"value": "2015211517"
+								},
+								{
+									"key": "gender",
+									"value": "男"
+								},
+								{
+									"key": "name",
+									"value": "王炜松"
+								},
+								{
+									"key": "academy",
+									"value": "软件"
+								},
+								{
+									"key": "major",
+									"value": "软件工程"
+								},
+								{
+									"key": "classNum",
+									"value": "04011503"
+								},
+								{
+									"key": "grade",
+									"value": "2015"
+								},
+								{
+									"key": "password",
+									"value": "123456"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin修改一名学生的信息",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/students/2015211516?name=老王&academy=计算机&gender=女&password=111111&grade=2015&major=计算机科学与技术",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"students",
+								"2015211516"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "老王"
+								},
+								{
+									"key": "academy",
+									"value": "计算机"
+								},
+								{
+									"key": "gender",
+									"value": "女"
+								},
+								{
+									"key": "password",
+									"value": "111111"
+								},
+								{
+									"key": "grade",
+									"value": "2015"
+								},
+								{
+									"key": "major",
+									"value": "计算机科学与技术"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin删除一名学生",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/students/2015211516",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"students",
+								"2015211516"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin获得学生列表",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "123.206.211.185:8080/cs/admin/students/",
+							"host": [
+								"123",
+								"206",
+								"211",
+								"185"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"students",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查看课程分类",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "123.206.211.185:8080/cs/admin/cmaps?pageSize=2",
+							"host": [
+								"123",
+								"206",
+								"211",
+								"185"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"cmaps"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增一个课程分类",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "123.206.211.185:8080/cs/admin/cmaps?courseCode=abc&courseName=智商测试",
+							"host": [
+								"123",
+								"206",
+								"211",
+								"185"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"cmaps"
+							],
+							"query": [
+								{
+									"key": "courseCode",
+									"value": "abc"
+								},
+								{
+									"key": "courseName",
+									"value": "智商测试"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin新增一个教学班",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/jxbs?courseCode=abc&hashDay=1&hashLesson=0&period=4&classRoom=2402&teacherId=010232&week=1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17&numLimit=50&credit=2&type=选修",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"jxbs"
+							],
+							"query": [
+								{
+									"key": "courseCode",
+									"value": "abc"
+								},
+								{
+									"key": "hashDay",
+									"value": "1"
+								},
+								{
+									"key": "hashLesson",
+									"value": "0"
+								},
+								{
+									"key": "period",
+									"value": "4"
+								},
+								{
+									"key": "classRoom",
+									"value": "2402"
+								},
+								{
+									"key": "teacherId",
+									"value": "010232"
+								},
+								{
+									"key": "week",
+									"value": "1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17"
+								},
+								{
+									"key": "numLimit",
+									"value": "50"
+								},
+								{
+									"key": "credit",
+									"value": "2"
+								},
+								{
+									"key": "type",
+									"value": "选修"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "根据课程号获取教学班",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "123.206.211.185:8080/cs/admin/jxbs/020498",
+							"host": [
+								"123",
+								"206",
+								"211",
+								"185"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"jxbs",
+								"020498"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查找特定的教学班",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/jxbs?hashDay=1&type=限选&teacher=唐政维",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"jxbs"
+							],
+							"query": [
+								{
+									"key": "hashDay",
+									"value": "1"
+								},
+								{
+									"key": "hashLesson",
+									"value": "3",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "限选"
+								},
+								{
+									"key": "teacher",
+									"value": "唐政维"
+								},
+								{
+									"key": "classRoom",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "courseCode",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "pageSize",
+									"value": "50",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "更改某个教学班的信息",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "123.206.211.185:8080/cs/admin/jxbs/A16172020400001?teacherId=010232",
+							"host": [
+								"123",
+								"206",
+								"211",
+								"185"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"jxbs",
+								"A16172020400001"
+							],
+							"query": [
+								{
+									"key": "teacherId",
+									"value": "010232"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin新增一名教师",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/teachers?teaId=012345&name=粤西&aid=9999&position=辅导员&password=123456",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"teachers"
+							],
+							"query": [
+								{
+									"key": "teaId",
+									"value": "012345"
+								},
+								{
+									"key": "name",
+									"value": "粤西"
+								},
+								{
+									"key": "aid",
+									"value": "9999"
+								},
+								{
+									"key": "position",
+									"value": "辅导员"
+								},
+								{
+									"key": "password",
+									"value": "123456"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin获得教师列表",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "127.0.0.1:8080/cs/admin/teachers?pageSize=2&key=德民&page=1",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"admin",
+								"teachers"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "2"
+								},
+								{
+									"key": "key",
+									"value": "德民"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "student",
+			"description": null,
+			"item": [
+				{
+					"name": "学生选课",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "123.206.211.185:8080/cs/student/cs.do?jxbId=A16172020488001&token=2015211517",
+							"host": [
+								"123",
+								"206",
+								"211",
+								"185"
+							],
+							"port": "8080",
+							"path": [
+								"cs",
+								"student",
+								"cs.do"
+							],
+							"query": [
+								{
+									"key": "jxbId",
+									"value": "A16172020488001"
+								},
+								{
+									"key": "token",
+									"value": "2015211517"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "根据教师工号查询课表",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "127.0.0.1:8080/cs/teacher/courses/020402?week=3",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"cs",
+						"teacher",
+						"courses",
+						"020402"
+					],
+					"query": [
+						{
+							"key": "week",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "获取可选的课程",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "123.206.211.185:8080/cs/student/courses",
+					"host": [
+						"123",
+						"206",
+						"211",
+						"185"
+					],
+					"port": "8080",
+					"path": [
+						"cs",
+						"student",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

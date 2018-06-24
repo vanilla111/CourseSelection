@@ -49,10 +49,13 @@
                 teacher = #{teacher},
             </if>
             <if test="numLimit != null">
-                num_limit = #{limit},
+                num_limit = #{numLimit},
             </if>
             <if test="currentNum != null">
                 current_num = #{currentNum},
+            </if>
+            <if test="credit != null">
+                credit = #{credit}
             </if>
         </trim>
         where jxb_id=#{jxbId}
